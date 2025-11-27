@@ -1,0 +1,106 @@
+{
+  "name": "ViviScape Example Workflows",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "start",
+      "name": "When clicking \"Execute Workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "resource": "account",
+        "operation": "getInfo"
+      },
+      "id": "viviscape-account",
+      "name": "Get Account Info",
+      "type": "n8n-nodes-viviscape.viviScape",
+      "typeVersion": 1,
+      "position": [450, 300],
+      "credentials": {
+        "viviScapeApi": {
+          "id": "1",
+          "name": "ViviScape API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "company",
+        "operation": "getAll"
+      },
+      "id": "viviscape-companies",
+      "name": "Get All Companies",
+      "type": "n8n-nodes-viviscape.viviScape",
+      "typeVersion": 1,
+      "position": [650, 300],
+      "credentials": {
+        "viviScapeApi": {
+          "id": "1",
+          "name": "ViviScape API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "project",
+        "operation": "getOpenTasks",
+        "requestData": "={\"account_id\": {{ $json.account_id }} }"
+      },
+      "id": "viviscape-tasks",
+      "name": "Get Open Tasks",
+      "type": "n8n-nodes-viviscape.viviScape",
+      "typeVersion": 1,
+      "position": [850, 300],
+      "credentials": {
+        "viviScapeApi": {
+          "id": "1",
+          "name": "ViviScape API"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking \"Execute Workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Get Account Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Account Info": {
+      "main": [
+        [
+          {
+            "node": "Get All Companies",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get All Companies": {
+      "main": [
+        [
+          {
+            "node": "Get Open Tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {},
+  "staticData": null,
+  "tags": [],
+  "meta": {
+    "instanceId": "example"
+  }
+}
