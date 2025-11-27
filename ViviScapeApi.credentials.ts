@@ -34,7 +34,7 @@ export class ViviScapeApi implements ICredentialType {
 		type: 'generic',
 		properties: {
 			headers: {
-				'Authorization': '=Bearer {{$credentials.apiKey}}',
+				'APIKey': '={{$credentials.apiKey}}',
 			},
 		},
 	};
