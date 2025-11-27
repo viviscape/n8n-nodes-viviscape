@@ -1,0 +1,59 @@
+{
+  "name": "n8n-nodes-viviscape",
+  "version": "1.0.0",
+  "description": "n8n community node for ViviScape API",
+  "keywords": [
+    "n8n-community-node-package",
+    "n8n",
+    "viviscape",
+    "crm",
+    "project-management",
+    "time-tracking",
+    "insights",
+    "notes"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/viviscape/n8n-nodes-viviscape#readme",
+  "author": {
+    "name": "ViviScape",
+    "email": "support@viviscape.io"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/viviscape/n8n-nodes-viviscape.git"
+  },
+  "bugs": {
+    "url": "https://github.com/viviscape/n8n-nodes-viviscape/issues"
+  },
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "format": "prettier nodes credentials --write",
+    "lint": "eslint nodes credentials package.json",
+    "lintfix": "eslint nodes credentials package.json --fix"
+  },
+  "files": [
+    "dist"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/credentials/ViviScapeApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/ViviScape/ViviScape.node.js"
+    ]
+  },
+  "devDependencies": {
+    "@typescript-eslint/parser": "^5.45.0",
+    "eslint": "^8.29.0",
+    "eslint-plugin-n8n-nodes-base": "^1.11.0",
+    "n8n-workflow": "*",
+    "prettier": "^2.7.1",
+    "typescript": "^4.9.4"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  }
+}
