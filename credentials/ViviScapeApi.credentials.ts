@@ -13,7 +13,7 @@ export class ViviScapeApi implements ICredentialType {
 	properties: INodeProperties[] = [
 		{
 			displayName: 'API Key',
-			name: 'apiKey',
+			name: 'APIKey', // <-- CHANGED so n8n stores it correctly
 			type: 'string',
 			typeOptions: {
 				password: true,
@@ -37,7 +37,7 @@ export class ViviScapeApi implements ICredentialType {
 		type: 'generic',
 		properties: {
 			headers: {
-				APIKey: '={{ $credentials.apiKey }}',
+				APIKey: '={{ $credentials.APIKey }}', // <-- MATCHES new property name
 			},
 		},
 	};
@@ -49,7 +49,7 @@ export class ViviScapeApi implements ICredentialType {
 			url: '/api/v1/account/info',
 			method: 'GET',
 			headers: {
-				APIKey: '={{ $credentials.apiKey }}',
+				APIKey: '={{ $credentials.APIKey }}', // <-- MATCHES new property name
 			},
 		},
 	};
