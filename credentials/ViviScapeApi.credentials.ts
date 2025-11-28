@@ -36,8 +36,9 @@ export class ViviScapeApi implements ICredentialType {
 	authenticate: IAuthenticateGeneric = {
 		type: 'generic',
 		properties: {
-			// IMPORTANT: must be one-line, no whitespace inside expression
-			headers: '={{{"APIKey": $credentials.apiKey}}}',
+			headers: {
+				APIKey: '={{ $credentials.apiKey }}',
+			},
 		},
 	};
 
