@@ -1,7 +1,7 @@
 {
   "name": "n8n-nodes-viviscape",
-  "version": "1.3.8",
-  "description": "n8n community node for ViviScape API",
+  "version": "1.4.0",
+  "description": "n8n community node for ViviScape API with AI Agent tools",
   "keywords": [
     "n8n-community-node-package",
     "n8n",
@@ -10,7 +10,9 @@
     "project-management",
     "time-tracking",
     "insights",
-    "notes"
+    "notes",
+    "ai-tools",
+    "langchain"
   ],
   "license": "MIT",
   "homepage": "https://github.com/viviscape/n8n-nodes-viviscape#readme",
@@ -42,18 +44,25 @@
       "dist/credentials/ViviScapeApi.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/ViviScape/ViviScape.node.js"
+      "dist/nodes/ViviScape/ViviScape.node.js",
+      "dist/nodes/ViviScape/ToolViviScape.node.js"
     ]
   },
   "devDependencies": {
+    "@langchain/core": "^0.1.0",
     "@typescript-eslint/parser": "^5.45.0",
     "eslint": "^8.29.0",
     "eslint-plugin-n8n-nodes-base": "^1.11.0",
     "n8n-workflow": "*",
     "prettier": "^2.7.1",
-    "typescript": "^4.9.4"
+    "typescript": "^4.9.4",
+    "zod": "^3.22.0"
   },
   "peerDependencies": {
     "n8n-workflow": "*"
+  },
+  "dependencies": {
+    "@langchain/core": "^0.1.0",
+    "zod": "^3.22.0"
   }
 }
