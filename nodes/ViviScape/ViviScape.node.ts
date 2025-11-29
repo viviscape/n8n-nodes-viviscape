@@ -5,10 +5,10 @@ import {
 	INodeTypeDescription,
 } from 'n8n-workflow';
 
-export class ToolViviScape implements INodeType {
+export class ViviScape implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'ViviScape Tool',
-		name: 'toolViviScape',
+		name: 'viviScape',
 		icon: 'file:viviscape-logo-white.svg',
 		group: ['transform'],
 		version: 1,

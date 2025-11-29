@@ -133,7 +133,7 @@ Task Data: {
 
 For detailed information about the ViviScape API, including all available fields and data structures, refer to the official API documentation:
 
-https://api.viviscape.io/swagger/docs/v1
+https://api.viviscape.io/swagger
 
 ## Compatibility
 
@@ -143,7 +143,7 @@ https://api.viviscape.io/swagger/docs/v1
 ## Resources
 
 * [n8n community nodes documentation](https://docs.n8n.io/integrations/community-nodes/)
-* [ViviScape API Documentation](https://api.viviscape.io/swagger/docs/v1)
+* [ViviScape API Documentation](https://api.viviscape.io/swagger)
 
 ## Support
 
