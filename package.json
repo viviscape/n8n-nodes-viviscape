@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-viviscape",
-  "version": "1.4.2",
+  "version": "1.4.0",
   "description": "n8n community node for ViviScape API with AI Agent tools",
   "keywords": [
     "n8n-community-node-package",
@@ -49,20 +49,14 @@
     ]
   },
   "devDependencies": {
-    "@langchain/core": "^0.1.0",
     "@typescript-eslint/parser": "^5.45.0",
     "eslint": "^8.29.0",
     "eslint-plugin-n8n-nodes-base": "^1.11.0",
     "n8n-workflow": "*",
     "prettier": "^2.7.1",
-    "typescript": "^4.9.4",
-    "zod": "^3.22.0"
+    "typescript": "^4.9.4"
   },
   "peerDependencies": {
     "n8n-workflow": "*"
-  },
-  "dependencies": {
-    "@langchain/core": "^0.1.0",
-    "zod": "^3.22.0"
   }
 }

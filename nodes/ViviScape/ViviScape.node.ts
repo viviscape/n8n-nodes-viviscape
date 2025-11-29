@@ -3,24 +3,35 @@ import {
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
-	IDataObject,
-	NodeOperationError,
 } from 'n8n-workflow';
 
-export class ViviScape implements INodeType {
+export class ToolViviScape implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'ViviScape',
-		name: 'viviScape',
-		icon: 'file:viviscape.svg',
+		displayName: 'ViviScape Tool',
+		name: 'toolViviScape',
+		icon: 'file:viviscape-logo-white.svg',
 		group: ['transform'],
 		version: 1,
-		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
-		description: 'Interact with ViviScape API',
+		description: 'Use ViviScape API with AI Agents',
 		defaults: {
-			name: 'ViviScape',
+			name: 'ViviScape Tool',
 		},
-		inputs: ['main'],
-		outputs: ['main'],
+		codex: {
+			categories: ['AI'],
+			subcategories: {
+				AI: ['Tools'],
+			},
+			resources: {
+				primaryDocumentation: [
+					{
+						url: 'https://viviscape.com',
+					},
+				],
+			},
+		},
+		inputs: [],
+		outputs: ['ai_tool'],
+		outputNames: ['Tool'],
 		credentials: [
 			{
 				name: 'viviScapeApi',
@@ -29,8 +40,8 @@ export class ViviScape implements INodeType {
 		],
 		properties: [
 			{
-				displayName: 'Resource',
-				name: 'resource',
+				displayName: 'Category',
+				name: 'category',
 				type: 'options',
 				noDataExpression: true,
 				options: [
@@ -47,22 +58,20 @@ export class ViviScape implements INodeType {
 						value: 'crm',
 					},
 					{
-						name: 'Insights',
-						value: 'insights',
+						name: 'Project',
+						value: 'project',
 					},
 					{
 						name: 'Notes',
 						value: 'notes',
 					},
 					{
-						name: 'Project',
-						value: 'project',
+						name: 'Insights',
+						value: 'insights',
 					},
 				],
 				default: 'account',
 			},
-
-			// Account Operations
 			{
 				displayName: 'Operation',
 				name: 'operation',
@@ -70,61 +79,28 @@ export class ViviScape implements INodeType {
 				noDataExpression: true,
 				displayOptions: {
 					show: {
-						resource: ['account'],
+						category: ['account'],
 					},
 				},
 				options: [
 					{
 						name: 'Get Account Info',
-						value: 'getInfo',
+						value: 'getAccountInfo',
 						description: 'Get platform account detail information',
-						action: 'Get account info',
 					},
 					{
-						name: 'Get Active Services',
-						value: 'getActiveServices',
-						description: 'Retrieve active services for the account',
-						action: 'Get active services',
-					},
-					{
-						name: 'Get All Services',
-						value: 'getAllServices',
-						description: 'Retrieve all services for the account',
-						action: 'Get all services',
-					},
-					{
-						name: 'Get Users',
-						value: 'getUsers',
-						description: 'Get users associated with the account',
-						action: 'Get users',
+						name: 'Get Account Users',
+						value: 'getAccountUsers',
+						description: 'Get all users in the account',
 					},
 					{
 						name: 'Get User by ID',
 						value: 'getUserById',
-						description: 'Get user by ID',
-						action: 'Get user by ID',
+						description: 'Get specific user details',
 					},
 				],
-				default: 'getInfo',
+				default: 'getAccountInfo',
 			},
-
-			// Account User ID field
-			{
-				displayName: 'User ID',
-				name: 'userId',
-				type: 'number',
-				required: true,
-				displayOptions: {
-					show: {
-						resource: ['account'],
-						operation: ['getUserById'],
-					},
-				},
-				default: 0,
-				description: 'The user ID to retrieve',
-			},
-
-			// Company Operations
 			{
 				displayName: 'Operation',
 				name: 'operation',
@@ -132,137 +108,28 @@ export class ViviScape implements INodeType {
 				noDataExpression: true,
 				displayOptions: {
 					show: {
-						resource: ['company'],
+						category: ['company'],
 					},
 				},
 				options: [
 					{
-						name: 'Add',
-						value: 'add',
-						description: 'Add a new company',
-						action: 'Add a company',
+						name: 'Get All Companies',
+						value: 'getAllCompanies',
+						description: 'Get list of all companies',
 					},
 					{
-						name: 'Get All',
-						value: 'getAll',
-						description: 'Get all companies',
-						action: 'Get all companies',
-					},
-					{
-						name: 'Update',
-						value: 'update',
-						description: 'Update a company',
-						action: 'Update a company',
-					},
-					{
-						name: 'Get Clients',
-						value: 'getClients',
-						description: 'Get clients by company ID',
-						action: 'Get clients',
-					},
-					{
-						name: 'Add Client',
-						value: 'addClient',
-						description: 'Add a new client',
-						action: 'Add a client',
-					},
-					{
-						name: 'Get Client by ID',
-						value: 'getClientById',
-						description: 'Get client by ID',
-						action: 'Get client by ID',
+						name: 'Get Company Clients',
+						value: 'getCompanyClients',
+						description: 'Get clients for a company',
 					},
 					{
 						name: 'Get Client by Email',
 						value: 'getClientByEmail',
-						description: 'Get client by email',
-						action: 'Get client by email',
+						description: 'Find client by email',
 					},
 				],
-				default: 'getAll',
+				default: 'getAllCompanies',
 			},
-
-			// Company ID field
-			{
-				displayName: 'Company ID',
-				name: 'companyId',
-				type: 'number',
-				required: true,
-				displayOptions: {
-					show: {
-						resource: ['company'],
-						operation: ['getClients', 'update'],
-					},
-				},
-				default: 0,
-				description: 'The company ID',
-			},
-
-			// Client ID field
-			{
-				displayName: 'Client ID',
-				name: 'clientId',
-				type: 'number',
-				required: true,
-				displayOptions: {
-					show: {
-						resource: ['company'],
-						operation: ['getClientById'],
-					},
-				},
-				default: 0,
-				description: 'The client ID',
-			},
-
-			// Client Email field
-			{
-				displayName: 'Client Email',
-				name: 'clientEmail',
-				type: 'string',
-				required: true,
-				displayOptions: {
-					show: {
-						resource: ['company'],
-						operation: ['getClientByEmail'],
-					},
-				},
-				default: '',
-				description: 'The client email address',
-			},
-
-			// Company Body (for add/update operations)
-			{
-				displayName: 'Company Data',
-				name: 'companyData',
-				type: 'json',
-				required: true,
-				displayOptions: {
-					show: {
-						resource: ['company'],
-						operation: ['add', 'update'],
-					},
-				},
-				default: '{}',
-				description: 'Company data as JSON',
-			},
-
-			// Client Body (for add operation)
-			{
-				displayName: 'Client Data',
-				name: 'clientData',
-				type: 'json',
-				required: true,
-				displayOptions: {
-					show: {
-						resource: ['company'],
-						operation: ['addClient'],
-					},
-				},
-				default: '{}',
-				description: 'Client data as JSON',
-			},
-
-			// CRM Operations
 			{
 				displayName: 'Operation',
 				name: 'operation',
@@ -270,143 +137,28 @@ export class ViviScape implements INodeType {
 				noDataExpression: true,
 				displayOptions: {
 					show: {
-						resource: ['crm'],
+						category: ['crm'],
 					},
 				},
 				options: [
 					{
-						name: 'Add Prospect',
-						value: 'addProspect',
-						description: 'Add a new prospect',
-						action: 'Add a prospect',
-					},
-					{
-						name: 'Update Prospect',
-						value: 'updateProspect',
-						description: 'Update an existing prospect',
-						action: 'Update a prospect',
-					},
-					{
-						name: 'Get Prospect',
-						value: 'getProspect',
-						description: 'Get prospect by ID',
-						action: 'Get a prospect',
-					},
-					{
-						name: 'Get Prospects by Rep',
-						value: 'getProspectsByRep',
-						description: 'Get prospects for a sales rep',
-						action: 'Get prospects by rep',
+						name: 'Get Prospect by ID',
+						value: 'getProspectById',
+						description: 'Get prospect details',
 					},
 					{
 						name: 'Query Prospects',
 						value: 'queryProspects',
-						description: 'Query prospects by account',
-						action: 'Query prospects',
+						description: 'Search prospects',
 					},
 					{
-						name: 'Remove Prospect',
-						value: 'removeProspect',
-						description: 'Remove a prospect',
-						action: 'Remove a prospect',
-					},
-					{
-						name: 'Add Note',
-						value: 'addNote',
-						description: 'Add a note to a prospect',
-						action: 'Add a note',
-					},
-					{
-						name: 'Get Notes',
-						value: 'getNotes',
-						description: 'Get notes for a prospect',
-						action: 'Get notes',
+						name: 'Get Prospect Notes',
+						value: 'getProspectNotes',
+						description: 'Get all prospect notes',
 					},
 				],
-				default: 'getProspect',
+				default: 'getProspectById',
 			},
-
-			// Prospect ID field
-			{
-				displayName: 'Prospect ID',
-				name: 'prospectId',
-				type: 'number',
-				required: true,
-				displayOptions: {
-					show: {
-						resource: ['crm'],
-						operation: ['getProspect', 'removeProspect', 'getNotes'],
-					},
-				},
-				default: 0,
-				description: 'The prospect ID',
-			},
-
-			// Rep ID field
-			{
-				displayName: 'Rep ID',
-				name: 'repId',
-				type: 'number',
-				required: true,
-				displayOptions: {
-					show: {
-						resource: ['crm'],
-						operation: ['getProspectsByRep'],
-					},
-				},
-				default: 0,
-				description: 'The sales rep ID',
-			},
-
-			// Prospect Data
-			{
-				displayName: 'Prospect Data',
-				name: 'prospectData',
-				type: 'json',
-				required: true,
-				displayOptions: {
-					show: {
-						resource: ['crm'],
-						operation: ['addProspect', 'updateProspect'],
-					},
-				},
-				default: '{}',
-				description: 'Prospect data as JSON',
-			},
-
-			// Query Data
-			{
-				displayName: 'Query Data',
-				name: 'queryData',
-				type: 'json',
-				required: true,
-				displayOptions: {
-					show: {
-						resource: ['crm'],
-						operation: ['queryProspects'],
-					},
-				},
-				default: '{}',
-				description: 'Query parameters as JSON (query, account_id, user_id, stages)',
-			},
-
-			// Note Data
-			{
-				displayName: 'Note Data',
-				name: 'noteData',
-				type: 'json',
-				required: true,
-				displayOptions: {
-					show: {
-						resource: ['crm'],
-						operation: ['addNote'],
-					},
-				},
-				default: '{}',
-				description: 'Note data as JSON',
-			},
-
-			// Insights Operations
 			{
 				displayName: 'Operation',
 				name: 'operation',
@@ -414,48 +166,38 @@ export class ViviScape implements INodeType {
 				noDataExpression: true,
 				displayOptions: {
 					show: {
-						resource: ['insights'],
+						category: ['project'],
 					},
 				},
 				options: [
 					{
-						name: 'Get Hours by Person',
-						value: 'getHoursByPerson',
-						description: 'Get aggregated hours for a person',
-						action: 'Get hours by person',
+						name: 'Get User Projects',
+						value: 'getUserProjects',
+						description: 'Get all user projects',
 					},
 					{
-						name: 'Get Time Logs',
-						value: 'getTimeLogs',
-						description: 'Get time logs for account by date range',
-						action: 'Get time logs',
+						name: 'Get Active Projects',
+						value: 'getActiveProjects',
+						description: 'Get active projects',
 					},
 					{
-						name: 'Get Person Stats',
-						value: 'getPersonStats',
-						description: 'Get aggregated statistics for a person',
-						action: 'Get person stats',
+						name: 'Get Project by ID',
+						value: 'getProjectById',
+						description: 'Get project details',
+					},
+					{
+						name: 'Get Project Tasks',
+						value: 'getProjectTasks',
+						description: 'Get all project tasks',
+					},
+					{
+						name: 'Get Open Tasks',
+						value: 'getOpenTasks',
+						description: 'Get all open tasks',
 					},
 				],
-				default: 'getHoursByPerson',
+				default: 'getUserProjects',
 			},
-
-			// Insights Request Data
-			{
-				displayName: 'Request Data',
-				name: 'insightsData',
-				type: 'json',
-				required: true,
-				displayOptions: {
-					show: {
-						resource: ['insights'],
-					},
-				},
-				default: '{"user_id": 0, "start_date": "", "end_date": ""}',
-				description: 'Request data as JSON (user_id, start_date, end_date)',
-			},
-
-			// Notes Operations
 			{
 				displayName: 'Operation',
 				name: 'operation',
@@ -463,99 +205,28 @@ export class ViviScape implements INodeType {
 				noDataExpression: true,
 				displayOptions: {
 					show: {
-						resource: ['notes'],
+						category: ['notes'],
 					},
 				},
 				options: [
 					{
 						name: 'Get My Notes',
 						value: 'getMyNotes',
-						description: 'Get notes for the current user',
-						action: 'Get my notes',
+						description: 'Get user notes',
 					},
 					{
-						name: 'Get Note',
-						value: 'getNote',
-						description: 'Get a note by ID',
-						action: 'Get a note',
-					},
-					{
-						name: 'Add Note',
-						value: 'addNote',
-						description: 'Add a new note',
-						action: 'Add a note',
-					},
-					{
-						name: 'Update Note',
-						value: 'updateNote',
-						description: 'Update an existing note',
-						action: 'Update a note',
-					},
-					{
-						name: 'Remove Note',
-						value: 'removeNote',
-						description: 'Remove a note',
-						action: 'Remove a note',
+						name: 'Get Note by ID',
+						value: 'getNoteById',
+						description: 'Get specific note',
 					},
 					{
 						name: 'Query Notes',
 						value: 'queryNotes',
 						description: 'Search notes',
-						action: 'Query notes',
 					},
 				],
 				default: 'getMyNotes',
 			},
-
-			// Note ID field
-			{
-				displayName: 'Note ID',
-				name: 'noteId',
-				type: 'string',
-				required: true,
-				displayOptions: {
-					show: {
-						resource: ['notes'],
-						operation: ['getNote', 'removeNote'],
-					},
-				},
-				default: '',
-				description: 'The note ID (UUID)',
-			},
-
-			// Note Data
-			{
-				displayName: 'Note Data',
-				name: 'noteData',
-				type: 'json',
-				required: true,
-				displayOptions: {
-					show: {
-						resource: ['notes'],
-						operation: ['addNote', 'updateNote'],
-					},
-				},
-				default: '{}',
-				description: 'Note data as JSON',
-			},
-
-			// Query Data for notes
-			{
-				displayName: 'Query Data',
-				name: 'queryData',
-				type: 'json',
-				required: true,
-				displayOptions: {
-					show: {
-						resource: ['notes'],
-						operation: ['queryNotes'],
-					},
-				},
-				default: '{}',
-				description: 'Query parameters as JSON',
-			},
-
-			// Project Operations
 			{
 				displayName: 'Operation',
 				name: 'operation',
@@ -563,561 +234,524 @@ export class ViviScape implements INodeType {
 				noDataExpression: true,
 				displayOptions: {
 					show: {
-						resource: ['project'],
+						category: ['insights'],
 					},
 				},
 				options: [
 					{
-						name: 'Get Projects',
-						value: 'getProjects',
-						description: 'Get all projects for a user',
-						action: 'Get projects',
+						name: 'Get Hours by Person',
+						value: 'getHoursByPerson',
+						description: 'Get time tracking data',
 					},
 					{
-						name: 'Get Active Projects',
-						value: 'getActiveProjects',
-						description: 'Get active projects for a user',
-						action: 'Get active projects',
-					},
-					{
-						name: 'Get Project by ID',
-						value: 'getProjectById',
-						description: 'Get project by ID',
-						action: 'Get project by ID',
-					},
-					{
-						name: 'Get Project Staff',
-						value: 'getProjectStaff',
-						description: 'Get staff assigned to a project',
-						action: 'Get project staff',
-					},
-					{
-						name: 'Add Task',
-						value: 'addTask',
-						description: 'Create a new project task',
-						action: 'Add a task',
-					},
-					{
-						name: 'Update Task',
-						value: 'updateTask',
-						description: 'Update an existing task',
-						action: 'Update a task',
-					},
-					{
-						name: 'Get Tasks',
-						value: 'getTasks',
-						description: 'Get tasks for a project',
-						action: 'Get tasks',
-					},
-					{
-						name: 'Get Open Tasks',
-						value: 'getOpenTasks',
-						description: 'Get open tasks for account',
-						action: 'Get open tasks',
+						name: 'Get Time Logs',
+						value: 'getTimeLogs',
+						description: 'Get detailed time logs',
 					},
 				],
-				default: 'getProjects',
-			},
-
-			// User ID for projects
-			{
-				displayName: 'User ID',
-				name: 'userId',
-				type: 'number',
-				required: true,
-				displayOptions: {
-					show: {
-						resource: ['project'],
-						operation: ['getProjects', 'getActiveProjects'],
-					},
-				},
-				default: 0,
-				description: 'The user ID',
-			},
-
-			// Project ID
-			{
-				displayName: 'Project ID',
-				name: 'projectId',
-				type: 'number',
-				required: true,
-				displayOptions: {
-					show: {
-						resource: ['project'],
-						operation: ['getProjectById', 'getProjectStaff', 'getTasks'],
-					},
-				},
-				default: 0,
-				description: 'The project ID',
-			},
-
-			// Task Data
-			{
-				displayName: 'Task Data',
-				name: 'taskData',
-				type: 'json',
-				required: true,
-				displayOptions: {
-					show: {
-						resource: ['project'],
-						operation: ['addTask', 'updateTask'],
-					},
-				},
-				default: '{}',
-				description: 'Task data as JSON',
-			},
-
-			// Open Tasks Request Data
-			{
-				displayName: 'Request Data',
-				name: 'requestData',
-				type: 'json',
-				required: true,
-				displayOptions: {
-					show: {
-						resource: ['project'],
-						operation: ['getOpenTasks'],
-					},
-				},
-				default: '{}',
-				description: 'Request data as JSON (account_id, filters)',
+				default: 'getHoursByPerson',
 			},
 		],
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
-		const items = this.getInputData();
-		const returnData: INodeExecutionData[] = [];
-		const resource = this.getNodeParameter('resource', 0);
-		const operation = this.getNodeParameter('operation', 0);
+		const category = this.getNodeParameter('category', 0) as string;
+		const operation = this.getNodeParameter('operation', 0) as string;
 		const credentials = await this.getCredentials('viviScapeApi');
+		
+		// Capture httpRequest helper in closure
+		const httpRequest = this.helpers.httpRequest.bind(this.helpers);
 
-		for (let i = 0; i < items.length; i++) {
-			try {
-				let responseData: any;
-
-				if (resource === 'account') {
-					// Account operations
-					if (operation === 'getInfo') {
-						responseData = await this.helpers.httpRequest({
-							method: 'GET',
-							url: `${credentials.baseUrl}/api/v1/account/info`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-						});
-					} else if (operation === 'getActiveServices') {
-						responseData = await this.helpers.httpRequest({
-							method: 'GET',
-							url: `${credentials.baseUrl}/api/v1/account/services/active`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-						});
-					} else if (operation === 'getAllServices') {
-						responseData = await this.helpers.httpRequest({
-							method: 'GET',
-							url: `${credentials.baseUrl}/api/v1/account/services/list`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-						});
-					} else if (operation === 'getUsers') {
-						responseData = await this.helpers.httpRequest({
-							method: 'GET',
-							url: `${credentials.baseUrl}/api/v1/account/users`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-						});
-					} else if (operation === 'getUserById') {
-						const userId = this.getNodeParameter('userId', i) as number;
-						responseData = await this.helpers.httpRequest({
-							method: 'GET',
-							url: `${credentials.baseUrl}/api/v1/account/user/id?userid=${userId}`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-						});
-					}
-				} else if (resource === 'company') {
-					// Company operations
-					if (operation === 'getAll') {
-						responseData = await this.helpers.httpRequest({
-							method: 'GET',
-							url: `${credentials.baseUrl}/api/v1/companies/list`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-						});
-					} else if (operation === 'add') {
-						const companyData = this.getNodeParameter('companyData', i) as string;
-						responseData = await this.helpers.httpRequest({
-							method: 'POST',
-							url: `${credentials.baseUrl}/api/v1/companies/add`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-							body: JSON.parse(companyData),
-						});
-					} else if (operation === 'update') {
-						const companyData = this.getNodeParameter('companyData', i) as string;
-						responseData = await this.helpers.httpRequest({
-							method: 'POST',
-							url: `${credentials.baseUrl}/api/v1/companies/update`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-							body: JSON.parse(companyData),
-						});
-					} else if (operation === 'getClients') {
-						const companyId = this.getNodeParameter('companyId', i) as number;
-						responseData = await this.helpers.httpRequest({
-							method: 'GET',
-							url: `${credentials.baseUrl}/api/v1/companies/clients/company/${companyId}`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-						});
-					} else if (operation === 'addClient') {
-						const clientData = this.getNodeParameter('clientData', i) as string;
-						responseData = await this.helpers.httpRequest({
-							method: 'POST',
-							url: `${credentials.baseUrl}/api/v1/companies/client/add`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-							body: JSON.parse(clientData),
-						});
-					} else if (operation === 'getClientById') {
-						const clientId = this.getNodeParameter('clientId', i) as number;
-						responseData = await this.helpers.httpRequest({
-							method: 'GET',
-							url: `${credentials.baseUrl}/api/v1/companies/client/id/${clientId}`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-						});
-					} else if (operation === 'getClientByEmail') {
-						const clientEmail = this.getNodeParameter('clientEmail', i) as string;
-						responseData = await this.helpers.httpRequest({
-							method: 'POST',
-							url: `${credentials.baseUrl}/api/v1/companies/client/email`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-							body: { email: clientEmail },
-						});
-					}
-				} else if (resource === 'crm') {
-					// CRM operations
-					if (operation === 'addProspect') {
-						const prospectData = this.getNodeParameter('prospectData', i) as string;
-						responseData = await this.helpers.httpRequest({
-							method: 'POST',
-							url: `${credentials.baseUrl}/api/v1/crm/prospect/add`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-							body: JSON.parse(prospectData),
-						});
-					} else if (operation === 'updateProspect') {
-						const prospectData = this.getNodeParameter('prospectData', i) as string;
-						responseData = await this.helpers.httpRequest({
-							method: 'POST',
-							url: `${credentials.baseUrl}/api/v1/crm/prospect/update`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-							body: JSON.parse(prospectData),
-						});
-					} else if (operation === 'getProspect') {
-						const prospectId = this.getNodeParameter('prospectId', i) as number;
-						responseData = await this.helpers.httpRequest({
-							method: 'GET',
-							url: `${credentials.baseUrl}/api/v1/crm/prospect/id/${prospectId}`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-						});
-					} else if (operation === 'getProspectsByRep') {
-						const repId = this.getNodeParameter('repId', i) as number;
-						responseData = await this.helpers.httpRequest({
-							method: 'GET',
-							url: `${credentials.baseUrl}/api/v1/crm/prospects/rep/${repId}`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-						});
-					} else if (operation === 'queryProspects') {
-						const queryData = this.getNodeParameter('queryData', i) as string;
-						responseData = await this.helpers.httpRequest({
-							method: 'POST',
-							url: `${credentials.baseUrl}/api/v1/crm/prospects/query`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-							body: JSON.parse(queryData),
-						});
-					} else if (operation === 'removeProspect') {
-						const prospectId = this.getNodeParameter('prospectId', i) as number;
-						responseData = await this.helpers.httpRequest({
-							method: 'GET',
-							url: `${credentials.baseUrl}/api/v1/crm/prospect/remove/${prospectId}`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-						});
-					} else if (operation === 'addNote') {
-						const noteData = this.getNodeParameter('noteData', i) as string;
-						responseData = await this.helpers.httpRequest({
-							method: 'POST',
-							url: `${credentials.baseUrl}/api/v1/crm/prospect/note/add`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-							body: JSON.parse(noteData),
-						});
-					} else if (operation === 'getNotes') {
-						const prospectId = this.getNodeParameter('prospectId', i) as number;
-						responseData = await this.helpers.httpRequest({
-							method: 'GET',
-							url: `${credentials.baseUrl}/api/v1/crm/prospect/notes/${prospectId}`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-						});
-					}
-				} else if (resource === 'insights') {
-					// Insights operations
-					const insightsData = this.getNodeParameter('insightsData', i) as string;
-
-					if (operation === 'getHoursByPerson') {
-						responseData = await this.helpers.httpRequest({
-							method: 'POST',
-							url: `${credentials.baseUrl}/api/v1/insights/logs/hours/person`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-							body: JSON.parse(insightsData),
-						});
-					} else if (operation === 'getTimeLogs') {
-						responseData = await this.helpers.httpRequest({
-							method: 'POST',
-							url: `${credentials.baseUrl}/api/v1/insights/logs/account/daterange`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-							body: JSON.parse(insightsData),
-						});
-					} else if (operation === 'getPersonStats') {
-						responseData = await this.helpers.httpRequest({
-							method: 'POST',
-							url: `${credentials.baseUrl}/api/v1/insights/person/stats`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-							body: JSON.parse(insightsData),
-						});
-					}
-				} else if (resource === 'notes') {
-					// Notes operations
-					if (operation === 'getMyNotes') {
-						responseData = await this.helpers.httpRequest({
-							method: 'GET',
-							url: `${credentials.baseUrl}/api/v1/notes/me`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-						});
-					} else if (operation === 'getNote') {
-						const noteId = this.getNodeParameter('noteId', i) as string;
-						responseData = await this.helpers.httpRequest({
-							method: 'GET',
-							url: `${credentials.baseUrl}/api/v1/notes/id/${noteId}`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-						});
-					} else if (operation === 'addNote') {
-						const noteData = this.getNodeParameter('noteData', i) as string;
-						responseData = await this.helpers.httpRequest({
-							method: 'POST',
-							url: `${credentials.baseUrl}/api/v1/notes/add`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-							body: JSON.parse(noteData),
-						});
-					} else if (operation === 'updateNote') {
-						const noteData = this.getNodeParameter('noteData', i) as string;
-						responseData = await this.helpers.httpRequest({
-							method: 'POST',
-							url: `${credentials.baseUrl}/api/v1/notes/update`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-							body: JSON.parse(noteData),
-						});
-					} else if (operation === 'removeNote') {
-						const noteId = this.getNodeParameter('noteId', i) as string;
-						responseData = await this.helpers.httpRequest({
-							method: 'GET',
-							url: `${credentials.baseUrl}/api/v1/notes/remove/${noteId}`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-						});
-					} else if (operation === 'queryNotes') {
-						const queryData = this.getNodeParameter('queryData', i) as string;
-						responseData = await this.helpers.httpRequest({
-							method: 'POST',
-							url: `${credentials.baseUrl}/api/v1/notes/query`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-							body: JSON.parse(queryData),
-						});
-					}
-				} else if (resource === 'project') {
-					// Project operations
-					if (operation === 'getProjects') {
-						const userId = this.getNodeParameter('userId', i) as number;
-						responseData = await this.helpers.httpRequest({
-							method: 'GET',
-							url: `${credentials.baseUrl}/api/v1/projects/user/projects?user_id=${userId}`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-						});
-					} else if (operation === 'getActiveProjects') {
-						const userId = this.getNodeParameter('userId', i) as number;
-						responseData = await this.helpers.httpRequest({
-							method: 'GET',
-							url: `${credentials.baseUrl}/api/v1/projects/user/projects/active?user_id=${userId}`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-						});
-					} else if (operation === 'getProjectById') {
-						const projectId = this.getNodeParameter('projectId', i) as number;
-						responseData = await this.helpers.httpRequest({
-							method: 'GET',
-							url: `${credentials.baseUrl}/api/v1/projects/id?project_id=${projectId}`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-						});
-					} else if (operation === 'getProjectStaff') {
-						const projectId = this.getNodeParameter('projectId', i) as number;
-						responseData = await this.helpers.httpRequest({
-							method: 'GET',
-							url: `${credentials.baseUrl}/api/v1/projects/project/staff?project_id=${projectId}`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-						});
-					} else if (operation === 'addTask') {
-						const taskData = this.getNodeParameter('taskData', i) as string;
-						responseData = await this.helpers.httpRequest({
-							method: 'POST',
-							url: `${credentials.baseUrl}/api/v1/projects/task/add`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-							body: JSON.parse(taskData),
-						});
-					} else if (operation === 'updateTask') {
-						const taskData = this.getNodeParameter('taskData', i) as string;
-						responseData = await this.helpers.httpRequest({
-							method: 'POST',
-							url: `${credentials.baseUrl}/api/v1/projects/task/update`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-							body: JSON.parse(taskData),
-						});
-					} else if (operation === 'getTasks') {
-						const projectId = this.getNodeParameter('projectId', i) as number;
-						responseData = await this.helpers.httpRequest({
-							method: 'GET',
-							url: `${credentials.baseUrl}/api/v1/projects/tasks/project?project_id=${projectId}`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-						});
-					} else if (operation === 'getOpenTasks') {
-						const requestData = this.getNodeParameter('requestData', i) as string;
-						responseData = await this.helpers.httpRequest({
-							method: 'POST',
-							url: `${credentials.baseUrl}/api/v1/projects/account/tasks/open`,
-							headers: {
-								'Authorization': `Bearer ${credentials.apiKey}`,
-								'Content-Type': 'application/json',
-							},
-							body: JSON.parse(requestData),
-						});
-					}
-				}
-
-				const executionData = this.helpers.constructExecutionMetaData(
-					this.helpers.returnJsonArray(responseData as IDataObject),
-					{ itemData: { item: i } },
-				);
-
-				returnData.push(...executionData);
-			} catch (error) {
-				if (this.continueOnFail()) {
-					returnData.push({
-						json: {
-							error: error.message,
+		// Map of operations to their configurations
+		const toolConfig: Record<string, any> = {
+			// Account Tools
+			getAccountInfo: {
+				name: 'viviscape_get_account_info',
+				description: 'Get platform account detail information including account name, settings, and configuration',
+				schema: {
+					type: 'object',
+					properties: {},
+					required: [],
+				},
+				func: async () => {
+					return await httpRequest({
+						method: 'GET',
+						url: `${credentials.baseUrl}/api/v1/account/info`,
+						headers: {
+							APIKey: credentials.apiKey as string,
+							'Content-Type': 'application/json',
 						},
-						pairedItem: { item: i },
 					});
-					continue;
-				}
-				throw new NodeOperationError(this.getNode(), error, {
-					itemIndex: i,
-				});
-			}
+				},
+			},
+			getAccountUsers: {
+				name: 'viviscape_get_account_users',
+				description: 'Get all users associated with the account including their roles, permissions, and contact information',
+				schema: {
+					type: 'object',
+					properties: {},
+					required: [],
+				},
+				func: async () => {
+					return await httpRequest({
+						method: 'GET',
+						url: `${credentials.baseUrl}/api/v1/account/users`,
+						headers: {
+							APIKey: credentials.apiKey as string,
+							'Content-Type': 'application/json',
+						},
+					});
+				},
+			},
+			getUserById: {
+				name: 'viviscape_get_user_by_id',
+				description: 'Get detailed information about a specific user by their ID including name, email, role, and permissions',
+				schema: {
+					type: 'object',
+					properties: {
+						userId: {
+							type: 'number',
+							description: 'The user ID to retrieve',
+						},
+					},
+					required: ['userId'],
+				},
+				func: async (input: { userId: number }) => {
+					return await httpRequest({
+						method: 'GET',
+						url: `${credentials.baseUrl}/api/v1/account/user/id?userid=${input.userId}`,
+						headers: {
+							APIKey: credentials.apiKey as string,
+							'Content-Type': 'application/json',
+						},
+					});
+				},
+			},
+			// Company Tools
+			getAllCompanies: {
+				name: 'viviscape_get_all_companies',
+				description: 'Get a list of all companies in the system including company names, contact information, and status',
+				schema: {
+					type: 'object',
+					properties: {},
+					required: [],
+				},
+				func: async () => {
+					return await httpRequest({
+						method: 'GET',
+						url: `${credentials.baseUrl}/api/v1/companies/list`,
+						headers: {
+							APIKey: credentials.apiKey as string,
+							'Content-Type': 'application/json',
+						},
+					});
+				},
+			},
+			getCompanyClients: {
+				name: 'viviscape_get_company_clients',
+				description: 'Get all clients associated with a specific company by company ID',
+				schema: {
+					type: 'object',
+					properties: {
+						companyId: {
+							type: 'number',
+							description: 'The company ID to get clients for',
+						},
+					},
+					required: ['companyId'],
+				},
+				func: async (input: { companyId: number }) => {
+					return await httpRequest({
+						method: 'GET',
+						url: `${credentials.baseUrl}/api/v1/companies/clients/company/${input.companyId}`,
+						headers: {
+							APIKey: credentials.apiKey as string,
+							'Content-Type': 'application/json',
+						},
+					});
+				},
+			},
+			getClientByEmail: {
+				name: 'viviscape_get_client_by_email',
+				description: 'Find a client by their email address to retrieve their full contact and company information',
+				schema: {
+					type: 'object',
+					properties: {
+						email: {
+							type: 'string',
+							description: 'The client email address to search for',
+						},
+					},
+					required: ['email'],
+				},
+				func: async (input: { email: string }) => {
+					return await httpRequest({
+						method: 'POST',
+						url: `${credentials.baseUrl}/api/v1/companies/client/email`,
+						headers: {
+							APIKey: credentials.apiKey as string,
+							'Content-Type': 'application/json',
+						},
+						body: { email: input.email },
+					});
+				},
+			},
+			// CRM Tools
+			getProspectById: {
+				name: 'viviscape_get_prospect_by_id',
+				description: 'Get detailed information about a specific prospect by ID including contact info, stage, notes, and history',
+				schema: {
+					type: 'object',
+					properties: {
+						prospectId: {
+							type: 'number',
+							description: 'The prospect ID to retrieve',
+						},
+					},
+					required: ['prospectId'],
+				},
+				func: async (input: { prospectId: number }) => {
+					return await httpRequest({
+						method: 'GET',
+						url: `${credentials.baseUrl}/api/v1/crm/prospect/id/${input.prospectId}`,
+						headers: {
+							APIKey: credentials.apiKey as string,
+							'Content-Type': 'application/json',
+						},
+					});
+				},
+			},
+			queryProspects: {
+				name: 'viviscape_query_prospects',
+				description: 'Search and filter prospects by various criteria like name, company, stage, or assigned rep',
+				schema: {
+					type: 'object',
+					properties: {
+						query: {
+							type: 'string',
+							description: 'Search query string',
+						},
+						account_id: {
+							type: 'number',
+							description: 'Filter by account ID',
+						},
+						user_id: {
+							type: 'number',
+							description: 'Filter by user ID',
+						},
+						stages: {
+							type: 'array',
+							items: { type: 'string' },
+							description: 'Filter by stages',
+						},
+					},
+					required: [],
+				},
+				func: async (input: any) => {
+					return await httpRequest({
+						method: 'POST',
+						url: `${credentials.baseUrl}/api/v1/crm/prospects/query`,
+						headers: {
+							APIKey: credentials.apiKey as string,
+							'Content-Type': 'application/json',
+						},
+						body: input,
+					});
+				},
+			},
+			getProspectNotes: {
+				name: 'viviscape_get_prospect_notes',
+				description: 'Get all notes associated with a specific prospect to review communication history',
+				schema: {
+					type: 'object',
+					properties: {
+						prospectId: {
+							type: 'number',
+							description: 'The prospect ID to get notes for',
+						},
+					},
+					required: ['prospectId'],
+				},
+				func: async (input: { prospectId: number }) => {
+					return await httpRequest({
+						method: 'GET',
+						url: `${credentials.baseUrl}/api/v1/crm/prospect/notes/${input.prospectId}`,
+						headers: {
+							APIKey: credentials.apiKey as string,
+							'Content-Type': 'application/json',
+						},
+					});
+				},
+			},
+			// Project Tools
+			getUserProjects: {
+				name: 'viviscape_get_user_projects',
+				description: 'Get all projects for the current user including project details, status, and timelines',
+				schema: {
+					type: 'object',
+					properties: {},
+					required: [],
+				},
+				func: async () => {
+					return await httpRequest({
+						method: 'GET',
+						url: `${credentials.baseUrl}/api/v1/projects/user/projects`,
+						headers: {
+							APIKey: credentials.apiKey as string,
+							'Content-Type': 'application/json',
+						},
+					});
+				},
+			},
+			getActiveProjects: {
+				name: 'viviscape_get_active_projects',
+				description: 'Get all active projects for a specific user that are currently in progress',
+				schema: {
+					type: 'object',
+					properties: {
+						userId: {
+							type: 'number',
+							description: 'The user ID to get active projects for',
+						},
+					},
+					required: ['userId'],
+				},
+				func: async (input: { userId: number }) => {
+					return await httpRequest({
+						method: 'GET',
+						url: `${credentials.baseUrl}/api/v1/projects/user/projects/active?user_id=${input.userId}`,
+						headers: {
+							APIKey: credentials.apiKey as string,
+							'Content-Type': 'application/json',
+						},
+					});
+				},
+			},
+			getProjectById: {
+				name: 'viviscape_get_project_by_id',
+				description: 'Get detailed information about a specific project by ID including tasks, staff, budget, and timeline',
+				schema: {
+					type: 'object',
+					properties: {
+						projectId: {
+							type: 'number',
+							description: 'The project ID to retrieve',
+						},
+					},
+					required: ['projectId'],
+				},
+				func: async (input: { projectId: number }) => {
+					return await httpRequest({
+						method: 'GET',
+						url: `${credentials.baseUrl}/api/v1/projects/id?project_id=${input.projectId}`,
+						headers: {
+							APIKey: credentials.apiKey as string,
+							'Content-Type': 'application/json',
+						},
+					});
+				},
+			},
+			getProjectTasks: {
+				name: 'viviscape_get_project_tasks',
+				description: 'Get all tasks for a specific project including task status, assignees, and deadlines',
+				schema: {
+					type: 'object',
+					properties: {
+						projectId: {
+							type: 'number',
+							description: 'The project ID to get tasks for',
+						},
+					},
+					required: ['projectId'],
+				},
+				func: async (input: { projectId: number }) => {
+					return await httpRequest({
+						method: 'GET',
+						url: `${credentials.baseUrl}/api/v1/projects/tasks/project?project_id=${input.projectId}`,
+						headers: {
+							APIKey: credentials.apiKey as string,
+							'Content-Type': 'application/json',
+						},
+					});
+				},
+			},
+			getOpenTasks: {
+				name: 'viviscape_get_open_tasks',
+				description: 'Get all open/incomplete tasks for the account, optionally filtered by project, assignee, or priority',
+				schema: {
+					type: 'object',
+					properties: {
+						account_id: {
+							type: 'number',
+							description: 'Filter by account ID',
+						},
+					},
+					required: [],
+				},
+				func: async (input: any) => {
+					return await httpRequest({
+						method: 'POST',
+						url: `${credentials.baseUrl}/api/v1/projects/account/tasks/open`,
+						headers: {
+							APIKey: credentials.apiKey as string,
+							'Content-Type': 'application/json',
+						},
+						body: input,
+					});
+				},
+			},
+			// Notes Tools
+			getMyNotes: {
+				name: 'viviscape_get_my_notes',
+				description: 'Get all notes created by or assigned to the current user',
+				schema: {
+					type: 'object',
+					properties: {},
+					required: [],
+				},
+				func: async () => {
+					return await httpRequest({
+						method: 'GET',
+						url: `${credentials.baseUrl}/api/v1/notes/me`,
+						headers: {
+							APIKey: credentials.apiKey as string,
+							'Content-Type': 'application/json',
+						},
+					});
+				},
+			},
+			getNoteById: {
+				name: 'viviscape_get_note_by_id',
+				description: 'Get a specific note by its ID to view the full content and metadata',
+				schema: {
+					type: 'object',
+					properties: {
+						noteId: {
+							type: 'string',
+							description: 'The note ID (UUID) to retrieve',
+						},
+					},
+					required: ['noteId'],
+				},
+				func: async (input: { noteId: string }) => {
+					return await httpRequest({
+						method: 'GET',
+						url: `${credentials.baseUrl}/api/v1/notes/id/${input.noteId}`,
+						headers: {
+							APIKey: credentials.apiKey as string,
+							'Content-Type': 'application/json',
+						},
+					});
+				},
+			},
+			queryNotes: {
+				name: 'viviscape_query_notes',
+				description: 'Search notes by keywords, tags, date range, or other criteria to find relevant information',
+				schema: {
+					type: 'object',
+					properties: {
+						query: {
+							type: 'string',
+							description: 'Search query string',
+						},
+						tags: {
+							type: 'array',
+							items: { type: 'string' },
+							description: 'Filter by tags',
+						},
+					},
+					required: [],
+				},
+				func: async (input: any) => {
+					return await httpRequest({
+						method: 'POST',
+						url: `${credentials.baseUrl}/api/v1/notes/query`,
+						headers: {
+							APIKey: credentials.apiKey as string,
+							'Content-Type': 'application/json',
+						},
+						body: input,
+					});
+				},
+			},
+			// Insights Tools
+			getHoursByPerson: {
+				name: 'viviscape_get_hours_by_person',
+				description: 'Get aggregated hours worked by a specific person over a date range for time tracking and billing',
+				schema: {
+					type: 'object',
+					properties: {
+						user_id: {
+							type: 'number',
+							description: 'The user ID',
+						},
+						start_date: {
+							type: 'string',
+							description: 'Start date (YYYY-MM-DD)',
+						},
+						end_date: {
+							type: 'string',
+							description: 'End date (YYYY-MM-DD)',
+						},
+					},
+					required: ['user_id', 'start_date', 'end_date'],
+				},
+				func: async (input: any) => {
+					return await httpRequest({
+						method: 'POST',
+						url: `${credentials.baseUrl}/api/v1/insights/logs/hours/person`,
+						headers: {
+							APIKey: credentials.apiKey as string,
+							'Content-Type': 'application/json',
+						},
+						body: input,
+					});
+				},
+			},
+			getTimeLogs: {
+				name: 'viviscape_get_time_logs',
+				description: 'Get detailed time logs for the account within a specific date range showing all time entries',
+				schema: {
+					type: 'object',
+					properties: {
+						start_date: {
+							type: 'string',
+							description: 'Start date (YYYY-MM-DD)',
+						},
+						end_date: {
+							type: 'string',
+							description: 'End date (YYYY-MM-DD)',
+						},
+					},
+					required: ['start_date', 'end_date'],
+				},
+				func: async (input: any) => {
+					return await httpRequest({
+						method: 'POST',
+						url: `${credentials.baseUrl}/api/v1/insights/logs/account/daterange`,
+						headers: {
+							APIKey: credentials.apiKey as string,
+							'Content-Type': 'application/json',
+						},
+						body: input,
+					});
+				},
+			},
+		};
+
+		const config = toolConfig[operation];
+		if (!config) {
+			throw new Error(`Operation ${operation} not found`);
 		}
 
-		return [returnData];
+		// Return the tool configuration in n8n AI tool format
+		return [[{ 
+			json: { 
+				name: config.name,
+				description: config.description,
+				schema: config.schema,
+				func: config.func,
+			} 
+		}]];
 	}
 }
