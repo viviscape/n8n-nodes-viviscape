@@ -13,14 +13,11 @@ export class ViviScapeApi implements ICredentialType {
 	properties: INodeProperties[] = [
 		{
 			displayName: 'API Key',
-			name: 'APIKey', // <-- CHANGED so n8n stores it correctly
+			name: 'apiKey',               // <-- lowercase, consistent
 			type: 'string',
-			typeOptions: {
-				password: true,
-			},
+			typeOptions: { password: true },
 			default: '',
 			required: true,
-			description: 'Your ViviScape API key',
 		},
 		{
 			displayName: 'Base URL',
@@ -28,28 +25,25 @@ export class ViviScapeApi implements ICredentialType {
 			type: 'string',
 			default: 'https://api.viviscape.io',
 			required: true,
-			description: 'The base URL for the ViviScape API',
 		},
 	];
 
-	// --- AUTHENTICATION ---
 	authenticate: IAuthenticateGeneric = {
 		type: 'generic',
 		properties: {
 			headers: {
-				APIKey: '={{ $credentials.APIKey }}', // <-- MATCHES new property name
+				APIKey: '={{ $credentials.apiKey }}',   // <-- matches "apiKey"
 			},
 		},
 	};
 
-	// --- TEST REQUEST ---
 	test: ICredentialTestRequest = {
 		request: {
 			baseURL: '={{ $credentials.baseUrl }}',
 			url: '/api/v1/account/info',
 			method: 'GET',
 			headers: {
-				APIKey: '={{ $credentials.APIKey }}', // <-- MATCHES new property name
+				APIKey: '={{ $credentials.apiKey }}',   // <-- matches "apiKey"
 			},
 		},
 	};
