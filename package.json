@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-viviscape",
-  "version": "1.4.4",
+  "version": "1.4.5",
   "description": "n8n community node for ViviScape API with AI Agent tools",
   "keywords": [
     "n8n-community-node-package",
@@ -11,14 +11,13 @@
     "time-tracking",
     "insights",
     "notes",
-    "ai-tools",
-    "langchain"
+    "ai-tools"
   ],
   "license": "MIT",
   "homepage": "https://github.com/viviscape/n8n-nodes-viviscape#readme",
   "author": {
     "name": "ViviScape",
-    "email": "support@viviscape.io"
+    "email": "support@viviscape.com"
   },
   "repository": {
     "type": "git",
@@ -29,14 +28,20 @@
   },
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && npm run copy-assets",
+    "copy-assets": "copyfiles -u 1 \"nodes/**/*.svg\" dist/",
     "dev": "tsc --watch",
     "format": "prettier nodes credentials --write",
     "lint": "eslint nodes credentials package.json",
-    "lintfix": "eslint nodes credentials package.json --fix"
+    "lintfix": "eslint nodes credentials package.json --fix",
+    "prepublishOnly": "npm run build"
   },
   "files": [
-    "dist"
+    "dist/**/*",
+    "dist/nodes/ViviScape/ViviScape.node.js",
+    "dist/nodes/ViviScape/ToolViviScape.node.js",
+    "dist/nodes/ViViScape/*.svg",
+    "dist/credentials/**/*"
   ],
   "n8n": {
     "n8nNodesApiVersion": 1,
@@ -50,6 +55,7 @@
   },
   "devDependencies": {
     "@typescript-eslint/parser": "^5.45.0",
+    "copyfiles": "^2.4.1",
     "eslint": "^8.29.0",
     "eslint-plugin-n8n-nodes-base": "^1.11.0",
     "n8n-workflow": "*",
