@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-viviscape",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "n8n community node for ViviScape API with AI Agent tools",
   "keywords": [
     "n8n-community-node-package",
