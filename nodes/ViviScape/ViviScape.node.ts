@@ -1,9 +1,10 @@
-import {
+import type {
 	IExecuteFunctions,
-	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
+	INodeExecutionData,
 } from 'n8n-workflow';
+
 
 export class ViviScape implements INodeType {
 	description: INodeTypeDescription = {

@@ -1,9 +1,10 @@
-import {
+import type {
 	IExecuteFunctions,
-	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
+	INodeExecutionData,
 } from 'n8n-workflow';
+
 
 export class ToolViviScape implements INodeType {
 	description: INodeTypeDescription = {
@@ -30,7 +31,7 @@ export class ToolViviScape implements INodeType {
 			},
 		},
 		inputs: [],
-		outputs: ['ai_tool'],
+		outputs: ['main'],
 		outputNames: ['Tool'],
 		credentials: [
 			{
