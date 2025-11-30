@@ -1,8 +1,8 @@
-import {
-	IAuthenticateGeneric,
-	ICredentialTestRequest,
+import type {
 	ICredentialType,
 	INodeProperties,
+	IAuthenticateGeneric,
+	ICredentialTestRequest,
 } from 'n8n-workflow';
 
 export class ViviScapeApi implements ICredentialType {
@@ -13,11 +13,14 @@ export class ViviScapeApi implements ICredentialType {
 	properties: INodeProperties[] = [
 		{
 			displayName: 'API Key',
-			name: 'apiKey',               // <-- lowercase, consistent
+			name: 'apiKey', // IMPORTANT: lower camelCase
 			type: 'string',
-			typeOptions: { password: true },
+			typeOptions: {
+				password: true,
+			},
 			default: '',
 			required: true,
+			description: 'Your ViviScape API key',
 		},
 		{
 			displayName: 'Base URL',
@@ -25,6 +28,7 @@ export class ViviScapeApi implements ICredentialType {
 			type: 'string',
 			default: 'https://api.viviscape.io',
 			required: true,
+			description: 'The base URL for the ViviScape API',
 		},
 	];
 
@@ -32,7 +36,7 @@ export class ViviScapeApi implements ICredentialType {
 		type: 'generic',
 		properties: {
 			headers: {
-				APIKey: '={{ $credentials.apiKey }}',   // <-- matches "apiKey"
+				APIKey: '={{ $credentials.apiKey }}',
 			},
 		},
 	};
@@ -43,7 +47,7 @@ export class ViviScapeApi implements ICredentialType {
 			url: '/api/v1/account/info',
 			method: 'GET',
 			headers: {
-				APIKey: '={{ $credentials.apiKey }}',   // <-- matches "apiKey"
+				APIKey: '={{ $credentials.apiKey }}',
 			},
 		},
 	};

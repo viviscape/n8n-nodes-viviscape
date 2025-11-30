@@ -1,10 +1,10 @@
 import type {
 	IExecuteFunctions,
+	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
-	INodeExecutionData,
+	IDataObject,
 } from 'n8n-workflow';
-
 
 export class ViviScape implements INodeType {
 	description: INodeTypeDescription = {
@@ -30,8 +30,8 @@ export class ViviScape implements INodeType {
 				],
 			},
 		},
-		inputs: [],
-		outputs: ['ai_tool'],
+		inputs: ['main'],
+        outputs: ['main'],
 		outputNames: ['Tool'],
 		credentials: [
 			{

@@ -8,10 +8,13 @@
     "rootDir": ".",
     "strict": false,
     "esModuleInterop": true,
+
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node", 
+    // ✨ CRITICAL FIX — prevents TS from loading zod types through @types
+    "typeRoots": ["./node_modules/@types"]
   },
   "include": [
     "nodes/**/*.ts",

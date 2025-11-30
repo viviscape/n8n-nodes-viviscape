@@ -1,10 +1,10 @@
 import type {
 	IExecuteFunctions,
+	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
-	INodeExecutionData,
+	IDataObject,
 } from 'n8n-workflow';
-
 
 export class ToolViviScape implements INodeType {
 	description: INodeTypeDescription = {
@@ -30,7 +30,7 @@ export class ToolViviScape implements INodeType {
 				],
 			},
 		},
-		inputs: [],
+		inputs: ['main'],
 		outputs: ['main'],
 		outputNames: ['Tool'],
 		credentials: [
@@ -746,13 +746,13 @@ export class ToolViviScape implements INodeType {
 		}
 
 		// Return the tool configuration in n8n AI tool format
-		return [[{ 
-			json: { 
-				name: config.name,
-				description: config.description,
-				schema: config.schema,
-				func: config.func,
-			} 
-		}]];
+return [[{
+	json: {
+		name: config.name,
+		description: config.description,
+		schema: config.schema,
+		func: config.func,
+	}
+}]];
 	}
 }
