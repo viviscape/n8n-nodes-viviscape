@@ -1,4 +1,4 @@
-import type {
+import  {
 	IExecuteFunctions,
 	INodeExecutionData,
 	INodeType,
@@ -8,14 +8,14 @@ import type {
 
 export class ToolViviScape implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'ViviScape Tool',
+		displayName: 'ViviScape AI',
 		name: 'toolViviScape',
-		icon: 'file:viviscape-logo-white.svg',
+		icon: 'file:viviscape-logo-white2.svg',
 		group: ['transform'],
 		version: 1,
 		description: 'Use ViviScape API with AI Agents',
 		defaults: {
-			name: 'ViviScape Tool',
+			name: 'ViviScape AI',
 		},
 		codex: {
 			categories: ['AI'],

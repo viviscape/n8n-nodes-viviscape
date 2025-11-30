@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-viviscape",
-  "version": "1.4.16",
+  "version": "1.4.15",
   "description": "n8n community node for ViviScape API",
   "keywords": [
     "n8n-community-node-package",
@@ -43,7 +43,8 @@
       "dist/credentials/ViviScapeApi.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/ViviScape/ViviScape.node.js"
+      "dist/nodes/ViviScape/ViviScape.node.js",
+      "dist/nodes/ToolViviScape/ToolViviScape.node.js"
     ]
   },
   "devDependencies": {
