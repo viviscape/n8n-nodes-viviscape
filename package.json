@@ -43,8 +43,8 @@
       "dist/credentials/ViviScapeApi.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/ViviScape/ViviScape.node.js",
-      "dist/nodes/ToolViviScape/ToolViviScape.node.js"
+      "dist/nodes/ViviScape/ViviScape.node.js"
+     
     ]
   },
   "devDependencies": {
