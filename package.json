@@ -44,7 +44,7 @@
     ],
     "nodes": [
       "dist/nodes/ViviScape/ViviScape.node.js",
-      "dist/nodes/ViviScape/ToolViviScape.node.js"
+      "dist/nodes/ToolViviScape/ToolViviScape.node.js"
     ]
   },
   "devDependencies": {
