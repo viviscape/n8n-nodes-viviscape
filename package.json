@@ -1,7 +1,7 @@
 {
   "name": "n8n-nodes-viviscape",
-  "version": "1.4.9",
-  "description": "n8n community node for ViviScape API with AI Agent tools",
+  "version": "1.4.7",
+  "description": "n8n community node for ViviScape API",
   "keywords": [
     "n8n-community-node-package",
     "n8n",
@@ -10,8 +10,7 @@
     "project-management",
     "time-tracking",
     "insights",
-    "notes",
-    "ai-tools"
+    "notes"
   ],
   "license": "MIT",
   "homepage": "https://github.com/viviscape/n8n-nodes-viviscape#readme",
@@ -26,8 +25,7 @@
   "bugs": {
     "url": "https://github.com/viviscape/n8n-nodes-viviscape/issues"
   },
-  "main": "index.js",
-  "scripts": {
+    "scripts": {
     "build": "tsc && npm run copy-assets",
     "copy-assets": "copyfiles -u 1 \"nodes/**/*.svg\" dist/",
     "dev": "tsc --watch",
@@ -37,11 +35,7 @@
     "prepublishOnly": "npm run build"
   },
   "files": [
-    "dist/**/*",
-    "dist/nodes/ViviScape/ViviScape.node.js",
-    "dist/nodes/ViviScape/ToolViviScape.node.js",
-    "dist/nodes/ViViScape/*.svg",
-    "dist/credentials/**/*"
+    "dist"
   ],
   "n8n": {
     "n8nNodesApiVersion": 1,
@@ -50,7 +44,7 @@
     ],
     "nodes": [
       "dist/nodes/ViviScape/ViviScape.node.js",
-      "dist/nodes/ViviScape/ToolViviScape.node.js"
+      "dist/nodes/ToolViviScape.node.js"
     ]
   },
   "devDependencies": {
