@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-viviscape",
-  "version": "1.4.18",
+  "version": "1.4.19",
   "description": "n8n community node for ViviScape API",
   "keywords": [
     "n8n-community-node-package",
