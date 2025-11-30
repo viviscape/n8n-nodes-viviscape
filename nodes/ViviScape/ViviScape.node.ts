@@ -8,28 +8,16 @@ import  {
 
 export class ViviScape implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'ViviScape Tool',
+		displayName: 'ViviScape',
 		name: 'viviScape',
 		icon: 'file:viviscape-logo-white.svg',
 		group: ['transform'],
 		version: 1,
-		description: 'Use ViviScape API with AI Agents',
+		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
+		description: 'Interact with ViviScape API',
 		defaults: {
 			name: 'ViviScape Tool',
-		},
-		codex: {
-			categories: ['AI'],
-			subcategories: {
-				AI: ['Tools'],
-			},
-			resources: {
-				primaryDocumentation: [
-					{
-						url: 'https://viviscape.com',
-					},
-				],
-			},
-		},
+		}, 
 		inputs: ['main'],
         outputs: ['main'],
 		outputNames: ['Tool'],
